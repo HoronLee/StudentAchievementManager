@@ -2,7 +2,6 @@ from PIL import Image, ImageTk
 from os import system
 import webbrowser
 
-
 # 打开帮助页（赞赏）
 def help():
     webbrowser.open('https://blog.horon.top', new=0, autoraise=True)
@@ -19,7 +18,36 @@ class Student:
     def show(self):
         print(self.sno, self.sname, self.chinese, self.math, self.english, self.chinese + self.math + self.english)
 
-
+# 按学号查询学生成绩
+def showByNo(sno,students):
+    list1 = []
+    for s in students:
+        if s[0] == sno:
+            list1.append(s)
+    return list1
+# 按姓名查询学生成绩
+def showByName(sname,students):
+    list1 = []
+    for s in students:
+        if s[1] == sname:
+            list1.append(s)
+    return list1
+#导入成绩
+def load_mark(filename):
+        student = []
+        try:
+            with open(filename, "r") as f:
+                for line in f.readlines():
+                    # 去除首位的空格，然后用空格作为分隔符将列表中每一项的内容分发给五个变量
+                    sno, sname, chinese, math, english = line.strip().split()
+                    chinese = int(chinese)
+                    math = int(math)
+                    english = int(english)
+                    student.append([sno, sname, chinese, math, english])
+            print("导入成功！")
+            return student
+        except Exception as err:
+            print("导入失败：%s" % err)
 class Mark:
     def __init__(self):
         self.students = []
@@ -47,16 +75,20 @@ class Mark:
                 break
 
     # 按学号查询学生成绩
-    def showByNo(self, sno):
-        for s in self.students:
-            if s.sno == sno:
-                s.show()
+    def showByNo(sno,students):
+        list1 = []
+        for s in range(len(students)):
+            if students[s][0] == int(sno):
+                list1.append(s)
+        return list1
 
     # 按姓名查询学生成绩
-    def showByName(self, sname):
-        for s in self.students:
-            if s.sname == sname:
-                s.show()
+    def showByName(sname,students):
+        list1 = []
+        for s in students:
+            if s[1] == sname:
+                list1.append(s)
+        return list1
 
     # 按总分排序
     def orderByTotal(self):
@@ -106,13 +138,13 @@ class Mark:
         except Exception as err:
             print("导出失败：%s" % err)
 
+
 class ViewMark:
     def view_insert(sno, sname, chinese, math, english):
         students = Mark()
         students.load_mark("marks.txt")
         students.insert(sno, sname, chinese, math, english)
         students.save_mark("marks.txt")
-
 
     def view_update(sno, sname, chinese, math, english):
         students = Mark()
@@ -122,10 +154,21 @@ class ViewMark:
         students.save_mark("marks.txt")
         print("修改成功！")
 
-    def view_show(sno, sname, chinese, math, english):
+
+    def view_delete(self, sno):
+        self.sno = sno
         students = Mark()
         students.load_mark("marks.txt")
+        Mark.delete(sno)
+        students.save_mark("marks.txt")
+        print("删除成功！")
 
+    def view_sort(self):
+        students = Mark()
+        students.load_mark("marks.txt")
+        Mark.showByName()
+        students.save_mark("marks.txt")
+        print("总分排序成功！")
 
 
 def main():
